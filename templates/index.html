@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Экран покупателя</title>
+
+  <script type="text/javascript">
+
+  "use strict";
+
+  function myUpdate(message) {
+
+console.log("add chack");
+console.log(message);
+/*
+     let msg = JSON.parse(message.data);
+	 if (msg.type == "newCheck") {
+		   for (let i=checkPosition.childNodes.length-1;i>1 ; i--) {
+       	 		checkPosition.removeChild(rightpanel.childNodes[i]);
+   			}
+	}
+    */
+
+}
+
+function ConnectWebSocket() {
+    let ws = new WebSocket('ws://localhost:8080/ws');
+        ws.onmessage = (message) => {myUpdate(message)}
+}
+ConnectWebSocket()
+</script>
+
+ </head>
+ <body>
+<div class="header">Магазин</div>
+	<div class="checkHeader">Ваш чек</div>
+	<div id = "checkBody">
+		<ol id="checkPosition">
+			<li><div class="position">Первая позиция</div><div class="count">2</div><div class="price">3.25</div></li>
+			<li><div class="position">Вторая позиция</div><div class="count">1</div><div class="price">135.35</div></li>
+		</ol>
+		<p id="summ">5555 Руб</p>
+		<div class="checkFooter">Спасибо за покупку</div>
+	</div>
+	<div class="footer">Приходите еще</div>
+ </body>
+</html>
