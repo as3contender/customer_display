@@ -40,15 +40,12 @@ func (b *Bus) Run() {
 		case message := <-b.broadcast:
 			for client := range b.clients {
 
-				log.Println(message)
+				err := client.WriteMessage(websocket.TextMessage, message)
 
-				w, err := client.NextWriter(websocket.TextMessage)
 				if err != nil {
 					delete(b.clients, client)
 					continue
 				}
-
-				w.Write(message)
 
 			}
 
@@ -56,12 +53,6 @@ func (b *Bus) Run() {
 			{
 				log.Println("User registered")
 				b.clients[client] = true
-
-				_, err := client.NextWriter(websocket.TextMessage)
-				if err != nil {
-					delete(b.clients, client)
-					continue
-				}
 
 			}
 		}
@@ -110,7 +101,7 @@ func HandleAddCheck(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
-	bus.broadcast <- []byte("hello world")
+	bus.broadcast <- m
 	w.Write(m)
 
 }
