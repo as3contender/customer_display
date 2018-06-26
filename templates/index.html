@@ -8,16 +8,18 @@
   <script type="text/javascript">
     "use strict";
 
+    <!-- conection --!>
     function myUpdate(message) {
 
-      console.log("add chack");
       console.log(message);
+
+      if (String(message.data).length == 0) {
+        return false
+      }
 
       let msg = JSON.parse(message.data);
       if (msg.type == "newCheck") {
-        for (let i = checkPosition.childNodes.length - 1; i > 1; i--) {
-          checkPosition.removeChild(checkPosition.childNodes[i]);
-        }
+        newCheck(msg.body);
       }
 
 
@@ -29,6 +31,16 @@
         myUpdate(message)
       }
     }
+    <!-- conection --!>
+
+    function newCheck(checkHeader) {
+      for (let i = checkPosition.childNodes.length - 1; i > 1; i--) {
+        checkPosition.removeChild(checkPosition.childNodes[i]);
+      }
+      
+      summ.innerHTML = ""
+    }
+
     ConnectWebSocket()
 
   </script>
@@ -36,7 +48,7 @@
 </head>
 
 <body>
-  <div class="header">Магазин</div>
+  <h1 class="header">Магазин</h1>
   <div class="checkHeader">Ваш чек</div>
   <div id="checkBody">
     <ol id="checkPosition">
