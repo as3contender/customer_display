@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,6 +19,10 @@ type Message struct {
 
 type Check struct {
 	Number string `json:"number"`
+}
+
+type DisplayString struct {
+	Str string `json:"str"`
 }
 
 var upgrader = websocket.Upgrader{
@@ -79,13 +84,35 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func HandleClear(w http.ResponseWriter, r *http.Request) {
+
+	check, err := json.Marshal("")
+	if err != nil {
+		log.Println(err.Error)
+	}
+
+	body := json.RawMessage(check)
+
+	var msg Message = Message{Type: "clear", Body: &body}
+
+	m, err := json.Marshal(msg)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	bus.broadcast <- m
+
+	w.Write(m)
+
+}
+
 func HandleAddCheck(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 
 	params := r.Form
 
-	log.Println(params)
+	log.Println("Params: ", params)
 
 	check, err := json.Marshal(Check{Number: "1504"})
 	if err != nil {
@@ -106,14 +133,71 @@ func HandleAddCheck(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func HandleAddString(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+
+	params := r.Form
+
+	if len(params) == 0 {
+		w.Write([]byte("No params"))
+		return
+	}
+
+	log.Println(params)
+
+	strings, err := json.Marshal(DisplayString{Str: params.Get("strings")})
+	if err != nil {
+		log.Println(err.Error)
+	}
+
+	body := json.RawMessage(strings)
+
+	var msg Message = Message{Type: "addString", Body: &body}
+
+	m, err := json.Marshal(msg)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	bus.broadcast <- m
+	w.Write(m)
+
+}
+
 func HandleWS(w http.ResponseWriter, r *http.Request) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("new client ")
+
 	bus.register <- ws
+
+}
+
+func PingWS() {
+
+	for {
+		<-time.After(5 * time.Second)
+
+		check, err := json.Marshal("")
+		if err != nil {
+			log.Println(err.Error)
+		}
+
+		body := json.RawMessage(check)
+
+		var msg Message = Message{Type: "ping", Body: &body}
+
+		m, err := json.Marshal(msg)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		bus.broadcast <- m
+
+	}
 
 }
 
@@ -121,12 +205,16 @@ func main() {
 
 	bus = NewBus()
 	go bus.Run()
+	go PingWS()
 
 	port := "8080"
 
 	http.HandleFunc("/", HandleIndex)
+	http.HandleFunc("/clear", HandleClear)
 	http.HandleFunc("/addcheck", HandleAddCheck)
+	http.HandleFunc("/addstring", HandleAddString)
 	http.HandleFunc("/ws", HandleWS)
 
 	http.ListenAndServe(":"+port, nil)
+
 }

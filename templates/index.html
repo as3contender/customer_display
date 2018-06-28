@@ -2,43 +2,78 @@
 <html lang="ru">
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>Экран покупателя</title>
 
   <script type="text/javascript">
     "use strict";
 
-    <!-- conection --!>
+    const ws = new WebSocket('ws://localhost:8080/ws');
+
     function myUpdate(message) {
 
-      console.log(message);
-
       if (String(message.data).length == 0) {
-        return false
+        return false;
       }
 
       let msg = JSON.parse(message.data);
+
+      if (msg.type == "clear") {
+         console.log(message);
+        clearDisplay();
+      }
+
+      if (msg.type == "ping") {
+        pong(msg.body);
+      }
+
       if (msg.type == "newCheck") {
+         console.log(message);
         newCheck(msg.body);
       }
 
+      if (msg.type == "addString") {
+         console.log(message);
+        addString(msg.body);
+      }
 
     }
 
     function ConnectWebSocket() {
-      let ws = new WebSocket('ws://localhost:8080/ws');
       ws.onmessage = (message) => {
         myUpdate(message)
       }
     }
-    <!-- conection --!>
 
-    function newCheck(checkHeader) {
-      for (let i = checkPosition.childNodes.length - 1; i > 1; i--) {
+    function clearDisplay() {
+      clearCheckBody();
+      check.hidden = true;
+    }
+
+    function pong() {
+      ws.send("pong");
+    }
+
+
+    function clearCheckBody() {
+      for (let i = checkPosition.childNodes.length - 1; i > 0; i--) {
         checkPosition.removeChild(checkPosition.childNodes[i]);
       }
-      
-      summ.innerHTML = ""
+
+      checkSumm.innerHTML = ""
+    }
+
+    function newCheck(checkHeader) {
+      clearCheckBody();
+      check.hidden = false;
+      checkSumm.innerHTML = '0 &#8381;'
+    }
+
+    function addString(strings) {
+      let str = strings.str;
+      let textElem = document.createElement('li');
+      textElem.innerHTML = String(str);
+      checkPosition.appendChild(textElem);
     }
 
     ConnectWebSocket()
@@ -48,25 +83,32 @@
 </head>
 
 <body>
-  <h1 class="header">Магазин</h1>
-  <div class="checkHeader">Ваш чек</div>
-  <div id="checkBody">
-    <ol id="checkPosition">
-      <li>
-        <div class="position">Первая позиция</div>
-        <div class="count">2</div>
-        <div class="price">3.25</div>
-      </li>
-      <li>
-        <div class="position">Вторая позиция</div>
-        <div class="count">1</div>
-        <div class="price">135.35</div>
-      </li>
-    </ol>
-    <p id="summ">5555 Руб</p>
-    <div class="checkFooter">Спасибо за покупку</div>
-  </div>
-  <div class="footer">Приходите еще</div>
+  <header>
+    <h1>Header</h1>
+  </header>
+  <main>
+    <div id="check">
+      <div class="checkHeader">Ваш чек</div>
+      <div id="checkSumm">5555 Руб</div>
+      <div id="checkBody">
+        <ol id="checkPosition">
+          <li>
+            <div class="position">Первая позиция</div>
+            <div class="count">2</div>
+            <div class="price">3.25</div>
+          </li>
+          <li>
+            <div class="position">Вторая позиция</div>
+            <div class="count">1</div>
+            <div class="price">135.35</div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>Footer</p>
+  </footer>
 </body>
 
 </html>
