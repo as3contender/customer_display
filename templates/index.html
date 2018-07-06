@@ -4,11 +4,100 @@
 <head>
   <meta charset="UTF-8">
   <title>Экран покупателя</title>
+  <link rel="stylesheet" href="css/display.css">
 
   <script type="text/javascript">
     "use strict";
 
+
+    class CheckItems {
+      constructor() {
+        this.items = [];
+      }
+
+      addItem(item) {
+
+        let i = 0;
+        let index = -1;
+
+        while (i <= this.items.length - 1) {
+          if (item.name == this.items[i].name) {
+            index = i;
+            break
+          }
+          i++;
+        }
+
+        if (index == -1) {
+          this.items.push(item);
+          CheckItems.addLabel(item);
+        } else {
+          this.items[index].count += item.count;
+          if (this.items[index].count == 0) {
+            CheckItems.deleteLabel(this.items[index]);
+          } else {
+            CheckItems.updateLabel(this.items[index]);
+          }
+        }
+
+      }
+
+      static addLabel(item) {
+        let el;
+        el = document.createElement('div');
+        el.class = "item_name";
+        el.id = "item_name_" + item.id;
+        el.innerHTML = String(item.name);
+        checkPosition.appendChild(el);
+
+        el = document.createElement('div');
+        el.class = "item_count";
+        el.id = "item_count_" + item.id;
+        el.innerHTML = String(item.count);
+        checkPosition.appendChild(el);
+
+        el = document.createElement('div');
+        el.class = "item_cost";
+        el.id = "item_cost_" + item.id;
+        el.innerHTML = String(item.cost);
+        checkPosition.appendChild(el);
+
+        el = document.createElement('div');
+        el.class = "item_sum";
+        el.id = "item_sum_" + item.id;
+        el.innerHTML = String(item.sum);
+        checkPosition.appendChild(el);
+      }
+
+      static updateLabel(item) {
+        let el;
+        el = document.getElementById("item_name_" + item.id);
+        el.innerHTML = String(item.name);
+        el = document.getElementById("item_count_" + item.id);
+        el.innerHTML = String(item.count);
+        el = document.getElementById("item_cost_" + item.id);
+        el.innerHTML = String(item.cost);
+        el = document.getElementById("item_sum_" + item.id);
+        el.innerHTML = String(item.sum);
+
+      }
+
+    }
+
+    class CheckItem {
+      constructor(name, count, cost, sum) {
+        this.id = idItems++;
+        this.name = name;
+        this.count = count;
+        this.cost = cost;
+        this.sum = sum;
+      }
+    }
     const ws = new WebSocket('ws://localhost:8080/ws');
+    let idItems = 0;
+    let checkItems = new CheckItems();
+
+
 
     function myUpdate(message) {
 
@@ -19,8 +108,9 @@
       let msg = JSON.parse(message.data);
 
       if (msg.type == "clear") {
-         console.log(message);
+        console.log(message);
         clearDisplay();
+        printInfo("ДОБРО ПОЖАЛОВАТЬ");
       }
 
       if (msg.type == "ping") {
@@ -28,13 +118,18 @@
       }
 
       if (msg.type == "newCheck") {
-         console.log(message);
+        console.log(message);
         newCheck(msg.body);
       }
 
       if (msg.type == "addString") {
-         console.log(message);
+        console.log(message);
         addString(msg.body);
+      }
+
+      if (msg.type == "addItem") {
+        console.log(message);
+        addItem(msg.body);
       }
 
     }
@@ -45,10 +140,16 @@
       }
     }
 
+    function printInfo(str) {
+      info.hidden = false;
+      info.innerHTML = str
+    }
+
     function clearDisplay() {
       clearCheckBody();
       check.hidden = true;
     }
+
 
     function pong() {
       ws.send("pong");
@@ -74,6 +175,11 @@
       let textElem = document.createElement('li');
       textElem.innerHTML = String(str);
       checkPosition.appendChild(textElem);
+    }
+
+    function addItem(item) {
+      let checkItem = new CheckItem(item.name, item.count, item.cost, item.sum);
+      checkItems.addItem(checkItem);
     }
 
     ConnectWebSocket()
@@ -105,6 +211,7 @@
         </ol>
       </div>
     </div>
+    <p id="info"></p>
   </main>
   <footer>
     <p>Footer</p>

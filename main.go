@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -19,6 +20,13 @@ type Message struct {
 
 type Check struct {
 	Number string `json:"number"`
+}
+
+type CheckItem struct {
+	Name  string  `json:"name"`
+	Count float64 `json:"count"`
+	Cost  float64 `json:"cost"`
+	Sum   float64 `json:"sum"`
 }
 
 type DisplayString struct {
@@ -133,6 +141,63 @@ func HandleAddCheck(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func HandleAddItem(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+
+	params := r.Form
+
+	if len(params) == 0 {
+		w.Write([]byte("No params"))
+		return
+	}
+
+	log.Println(params)
+
+	count, err := strconv.ParseFloat(params.Get("count"), 32)
+
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	cost, err := strconv.ParseFloat(params.Get("cost"), 32)
+
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	sum, err := strconv.ParseFloat(params.Get("sum"), 32)
+
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	strings, err := json.Marshal(
+		CheckItem{Name: params.Get("name"),
+			Count: count,
+			Cost:  cost,
+			Sum:   sum})
+	if err != nil {
+		log.Println(err.Error)
+	}
+
+	body := json.RawMessage(strings)
+
+	var msg Message = Message{Type: "addItem", Body: &body}
+
+	m, err := json.Marshal(msg)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	bus.broadcast <- m
+	w.Write(m)
+
+}
+
 func HandleAddString(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
@@ -213,7 +278,10 @@ func main() {
 	http.HandleFunc("/clear", HandleClear)
 	http.HandleFunc("/addcheck", HandleAddCheck)
 	http.HandleFunc("/addstring", HandleAddString)
+	http.HandleFunc("/additem", HandleAddItem)
 	http.HandleFunc("/ws", HandleWS)
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./css/"))))
+	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./img/"))))
 
 	http.ListenAndServe(":"+port, nil)
 
