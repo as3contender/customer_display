@@ -4,3 +4,7 @@ body {
   color: aliceblue;
   margin-left: 50px;
 }
+
+.position_delete {
+  text-decoration: line-through;
+}
