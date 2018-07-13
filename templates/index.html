@@ -113,7 +113,6 @@
     let checkItems = new CheckItems();
 
 
-
     function myUpdate(message) {
 
       if (String(message.data).length == 0) {
@@ -125,7 +124,7 @@
       if (msg.type == "clear") {
         console.log(message);
         clearDisplay();
-        printInfo("ДОБРО ПОЖАЛОВАТЬ");
+        printInfo(getGreeting());
       }
 
       if (msg.type == "ping") {
@@ -168,14 +167,12 @@
     function clearDisplay() {
       clearCheckBody();
       check.hidden = true;
-      printInfo('ДОБРО ПОЖАЛОВАТЬ');
+      printInfo(getGreeting());
     }
-
 
     function pong() {
       ws.send("pong");
     }
-
 
     function clearCheckBody() {
       for (let i = checkPosition.childNodes.length - 1; i > 0; i--) {
@@ -212,6 +209,20 @@
       checkSumm.innerHTML = String(item.total) + ' &#8381;'
     }
 
+    function getGreeting() {
+      let h = new Date().getHours();
+      let s = '';
+      if ((h >= 0) && (h <= 11)) {
+        s = 'Доброе утро';
+      } else if ((h > 11) && (h <= 17)) {
+        s = 'Добрый день';
+      } else if ((h > 17) && (h <= 24)) {
+        s = 'Добрый вечер';
+      } else {
+        s = 'Доброго времени суток';
+      }
+      return s;
+    }
 
     ConnectWebSocket()
 
@@ -220,33 +231,38 @@
 </head>
 
 <body>
-  <header>
-    <h1>Header</h1>
-  </header>
-  <main>
-    <p id="info"></p>
-    <div id="check">
-      <div class="checkHeader">Ваш чек</div>
-      <div id="checkSumm">5555 Руб</div>
-      <div id="checkBody">
-        <ol id="checkPosition">
-          <li>
-            <div class="position">Первая позиция</div>
-            <div class="count">2</div>
-            <div class="price">3.25</div>
-          </li>
-          <li>
-            <div class="position">Вторая позиция</div>
-            <div class="count">1</div>
-            <div class="price">135.35</div>
-          </li>
-        </ol>
+  <div class="container">
+    <header>
+      <img class="logo" src="img/logo.png" alt="logo">
+      <h1 id="greeting">Header</h1>
+    </header>
+    <main>
+      <p id="info"></p>
+      <div id="check">
+        <div class="checkHeader">Ваш чек</div>
+        <div id="checkSumm">5555 Руб</div>
+        <div id="checkBody">
+          <ol id="checkPosition">
+            <li>
+              <div class="item_name">Первая позиция</div>
+              <div class="item_count">2</div>
+              <div class="item_cost">3.25</div>
+              <div class="item_sum">6.5</div>
+            </li>
+            <li>
+              <div class="item_name">Вторая позиция</div>
+              <div class="item_count">1</div>
+              <div class="item_cost">135.35</div>
+              <div class="item_sum">135.35</div>
+            </li>
+          </ol>
+        </div>
       </div>
-    </div>
-  </main>
-  <footer>
-    <p>Footer</p>
-  </footer>
+    </main>
+    <footer>
+      <p>Footer</p>
+    </footer>
+  </div>
 </body>
 
 </html>

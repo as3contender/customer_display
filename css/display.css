@@ -1,10 +1,72 @@
-body {
-  font: 12pt "Franklin Gothic Medium", cursive;
-  background-image: url(../img/backgound.jpg);
-  color: aliceblue;
-  margin-left: 50px;
-}
+ @font-face {
+   font-family: MarckScript-Regular;
+   /* Гарнитура шрифта */
+   src: url(../fonts/MarckScript-Regular.ttf);
+   /* Путь к файлу со шрифтом */
+ }
 
-.position_delete {
-  text-decoration: line-through;
-}
+ body {
+   width: 800px;
+   height: 480px;
+   font: 12pt MarckScript-Regular, cursive;
+   background-image: url(../img/backgound.jpg);
+   color: aliceblue;
+ }
+
+ .position_delete {
+   text-decoration: line-through;
+ }
+
+ .container {
+   margin: 10px;
+   border: 5px double aliceblue;
+ }
+
+ .logo {
+   width: 55px;
+   height: 50px;
+   display: inline-block;
+   float: left;
+ }
+
+ header p {
+   display: inline-block;
+   float: right;
+ }
+
+ header h1 {
+   margin-left: 70px;
+ }
+
+ main {
+   clear: both;
+ }
+
+ .item_name {
+   display: inline-block;
+   width: 180px;
+ }
+
+ .item_count {
+   display: inline-block;
+   width: 30px;
+ }
+
+ .item_cost {
+   display: inline-block;
+   width: 30px;
+ }
+
+ .item_sum {
+   display: inline-block;
+   width: 30px;
+ }
+
+ #checkPosition li {
+   margin-top: 10px;
+ }
+
+ #checkSumm {
+   text-align: right;
+   width: 260px;
+ }
