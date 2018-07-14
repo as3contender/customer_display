@@ -9,64 +9,98 @@
    width: 800px;
    height: 480px;
    font: 12pt MarckScript-Regular, cursive;
-   background-image: url(../img/backgound.jpg);
+
    color: aliceblue;
  }
 
- .position_delete {
+ .position_delete div {
    text-decoration: line-through;
+   color: #dbe5ed4d;
  }
 
  .container {
-   margin: 10px;
-   border: 5px double aliceblue;
+   width: 800px;
+   height: 480px;
+   padding: 10px;
+   background-image: url(../img/backgound.jpg);
  }
 
  .logo {
-   width: 55px;
-   height: 50px;
-   display: inline-block;
-   float: left;
- }
-
- header p {
+   width: 110px;
+   height: 100px;
    display: inline-block;
    float: right;
+   margin-top: 20px;
+   margin-right: 20px;
+   margin-right: 20px;
  }
 
- header h1 {
-   margin-left: 70px;
+ #info {
+   text-align: center;
+   display: inline-block;
+   width: 80%;
  }
 
  main {
-   clear: both;
+   /*clear: both;*/
  }
 
  .item_name {
    display: inline-block;
-   width: 180px;
+   width: 500px;
  }
 
  .item_count {
    display: inline-block;
-   width: 30px;
+   width: 60px;
+   font-size: 1.5em;
+   text-align: right;
  }
 
  .item_cost {
    display: inline-block;
-   width: 30px;
+   width: 60px;
+   font-size: 1.5em;
+   text-align: right;
  }
 
  .item_sum {
    display: inline-block;
-   width: 30px;
+   width: 60px;
+   font-size: 1.5em;
+   text-align: right;
  }
 
  #checkPosition li {
    margin-top: 10px;
  }
 
+ #checkIntroduced,
+ #checkDelivery,
  #checkSumm {
+   width: 80%;
    text-align: right;
-   width: 260px;
+   font-size: 1.5em;
+ }
+
+ #checkDelivery {
+   font-size: 1.7em;
+ }
+
+
+ .fs2x {
+   font-size: 1.6em;
+ }
+
+ .r {
+   margin-left: 3px;
+   display: inline;
+ }
+
+ #checkPosition .r {
+   font-size: 0.8em;
+ }
+
+ footer {
+   display: none;
  }

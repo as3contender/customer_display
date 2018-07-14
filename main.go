@@ -35,6 +35,12 @@ type DisplayString struct {
 	Str string `json:"str"`
 }
 
+type Charge struct {
+	Introduced float64 `json:"introduced"`
+	Delivery   float64 `json:"delivery"`
+	Sum        float64 `json:"sum"`
+}
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -287,6 +293,62 @@ func HandleDelItem(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func HandleCharge(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+
+	params := r.Form
+
+	if len(params) == 0 {
+		w.Write([]byte("No params"))
+		return
+	}
+
+	log.Println(params)
+
+	introduced, err := strconv.ParseFloat(params.Get("introduced"), 64)
+	introduced = Round(introduced, 2)
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	delivery, err := strconv.ParseFloat(params.Get("delivery"), 64)
+	delivery = Round(delivery, 2)
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	sum, err := strconv.ParseFloat(params.Get("sum"), 64)
+	sum = Round(sum, 2)
+	if err != nil {
+		log.Println(err.Error)
+		return
+	}
+
+	strings, err := json.Marshal(
+		Charge{
+			Introduced: introduced,
+			Delivery:   delivery,
+			Sum:        sum})
+	if err != nil {
+		log.Println(err.Error)
+	}
+
+	body := json.RawMessage(strings)
+
+	var msg Message = Message{Type: "charge", Body: &body}
+
+	m, err := json.Marshal(msg)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	bus.broadcast <- m
+	w.Write(m)
+}
+
 func HandleAddString(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
@@ -369,6 +431,7 @@ func main() {
 	http.HandleFunc("/addstring", HandleAddString)
 	http.HandleFunc("/additem", HandleAddItem)
 	http.HandleFunc("/delitem", HandleDelItem)
+	http.HandleFunc("/charge", HandleCharge)
 	http.HandleFunc("/ws", HandleWS)
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./css/"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./img/"))))

@@ -13,6 +13,7 @@
     class CheckItems {
       constructor() {
         this.items = [];
+        this.vItems = [];
       }
 
       addItem(item, del = false) {
@@ -46,6 +47,14 @@
       }
 
       static addLabel(item) {
+        checkItems.vItems.push(item.id);
+        if (checkItems.vItems.length > ITEM_ON_DISPLAY) {
+          let el_hidden = document.getElementById('item_' + checkItems.vItems[0]);
+          el_hidden.style.display = 'none';
+          //checkPosition.removeChild(el_hidden);
+          checkItems.vItems.shift();
+        }
+
         let el;
         let el_li = document.createElement('li');
         el_li.className = "position_activ";
@@ -66,13 +75,13 @@
         el = document.createElement('div');
         el.className = "item_cost";
         el.id = "item_cost_" + item.id;
-        el.innerHTML = String(item.cost);
+        el.innerHTML = String(item.cost) + '<p class="r">&#8381;</p>';
         el_li.appendChild(el);
 
         el = document.createElement('div');
         el.className = "item_sum";
         el.id = "item_sum_" + item.id;
-        el.innerHTML = String(item.sum);
+        el.innerHTML = String(item.sum) + '<p class="r">&#8381;</p>';
         el_li.appendChild(el);
 
         checkPosition.appendChild(el_li);
@@ -85,14 +94,20 @@
         el = document.getElementById("item_count_" + item.id);
         el.innerHTML = String(item.count);
         el = document.getElementById("item_cost_" + item.id);
-        el.innerHTML = String(item.cost);
+        el.innerHTML = String(item.cost) + '<p class="r">&#8381;</p>';
         el = document.getElementById("item_sum_" + item.id);
-        el.innerHTML = String(item.sum);
+        el.innerHTML = String(item.sum) + '<p class="r">&#8381;</p>';
       }
 
       static deleteLabel(item) {
+        item.activ = false;
         let el_li = document.getElementById('item_' + item.id);
-        el_li.className = "position_delete"
+        el_li.className = "position_delete";
+
+        let index = checkItems.vItems.indexOf(item.id);
+        if (index == -1) {
+          hiddenDelItems();
+        }
       }
 
     }
@@ -109,9 +124,10 @@
     }
 
     const ws = new WebSocket('ws://localhost:8080/ws');
+    const ITEM_ON_DISPLAY = 8;
     let idItems = 0;
     let checkItems = new CheckItems();
-
+    let isFirst = true;
 
     function myUpdate(message) {
 
@@ -124,7 +140,6 @@
       if (msg.type == "clear") {
         console.log(message);
         clearDisplay();
-        printInfo(getGreeting());
       }
 
       if (msg.type == "ping") {
@@ -151,6 +166,13 @@
         delItem(msg.body);
       }
 
+      if (msg.type == "charge") {
+        console.log(message);
+        charge(msg.body);
+      }
+
+      checkPosition.start = checkItems.items.length - checkItems.vItems.length + 1;
+
     }
 
     function ConnectWebSocket() {
@@ -160,7 +182,7 @@
     }
 
     function printInfo(str) {
-      info.hidden = false;
+      //info.hidden = false;
       info.innerHTML = str
     }
 
@@ -168,6 +190,10 @@
       clearCheckBody();
       check.hidden = true;
       printInfo(getGreeting());
+
+      idItems = 0;
+      checkItems = new CheckItems();
+      isFirst = true;
     }
 
     function pong() {
@@ -179,7 +205,11 @@
         checkPosition.removeChild(checkPosition.childNodes[i]);
       }
 
-      checkSumm.innerHTML = ""
+      checkIntroduced.innerHTML = "";
+      checkIntroduced.display = 'none';
+      checkSumm.innerHTML = "";
+      checkDelivery.innerHTML = "";
+      checkDelivery.display = 'none';
     }
 
     function newCheck() {
@@ -196,17 +226,68 @@
     }
 
     function addItem(item) {
+      if (isFirst == true) {
+        checkPosition.start = 1;
+        clearDisplay();
+        isFirst = false;
+      }
+      //info.hidden = true;
+      hiddenDelItems();
       let checkItem = new CheckItem(item.name, item.count, item.cost, item.sum);
       checkItems.addItem(checkItem);
-      checkSumm.innerHTML = String(item.total) + ' &#8381;'
+      checkSumm.innerHTML = 'Общая сумма: <span class="fs2x">' + String(item.total) + '</span><p class="r">&#8381;</p>'
       check.hidden = false;
-      info.hidden = true;
     }
 
     function delItem(item) {
       let checkItem = new CheckItem(item.name, item.count, item.cost, item.sum);
       checkItems.addItem(checkItem, true);
-      checkSumm.innerHTML = String(item.total) + ' &#8381;'
+      checkSumm.innerHTML = 'Общая сумма: <span class="fs2x">' + String(item.total) + '</span><p class="r">&#8381;</p>'
+    }
+
+    function charge(charge) {
+      checkIntroduced.innerHTML = 'Внесено: <span class="fs2x">' + String(charge.introduced) + '</span><p class="r">&#8381;</p>';
+      checkIntroduced.display = 'block';
+      checkSumm.innerHTML = 'Общая сумма: <span class="fs2x">' + String(charge.sum) + '</span><p class="r">&#8381;</p>';
+      if (charge.delivery > 0) {
+        checkDelivery.innerHTML = 'Ваша Сдача: <span class="fs2x">' + String(charge.delivery) + '</span><p class="r">&#8381;</p>';
+        checkDelivery.display = 'block';
+      }
+      isFirst = true;
+    }
+
+    function hiddenDelItems() {
+      let forDel = [];
+      let i = 0;
+      while (i <= checkItems.items.length - 1) {
+
+        if (!checkItems.items[i].activ) {
+          let el_hidden = document.getElementById('item_' + checkItems.items[i].id);
+
+          let index = checkItems.vItems.indexOf(checkItems.items[i].id);
+          if (index != -1) {
+
+            checkItems.vItems.splice(index, 1);
+            if (checkItems.items.length > ITEM_ON_DISPLAY) {
+              let item = checkItems.items[checkItems.items.length - ITEM_ON_DISPLAY - 1];
+              checkItems.vItems.unshift(item.id);
+              let el2 = document.getElementById('item_' + item.id);
+              el2.style.display = 'list-item';
+            }
+
+          }
+          checkPosition.removeChild(el_hidden);
+          forDel.push(i);
+        }
+
+        i++;
+
+      }
+
+      for (i = forDel.length - 1; i >= 0; i--) {
+        checkItems.items.splice(forDel[i], 1);
+      }
+
     }
 
     function getGreeting() {
@@ -234,13 +315,19 @@
   <div class="container">
     <header>
       <img class="logo" src="img/logo.png" alt="logo">
-      <h1 id="greeting">Header</h1>
+      <h1 id="info">Доброго времени суток</h1>
     </header>
     <main>
-      <p id="info"></p>
       <div id="check">
-        <div class="checkHeader">Ваш чек</div>
-        <div id="checkSumm">5555 Руб</div>
+        <div id="checkIntroduced"> Внесено: <span class="fs2x">2000</span>
+          <p class="r">&#8381;</p>
+        </div>
+        <div id="checkSumm"> Общая сумма: <span class="fs2x">1523.90</span>
+          <p class="r">&#8381;</p>
+        </div>
+        <div id="checkDelivery"> Ваша Сдача: <span class="fs2x">1234.11</span>
+          <p class="r">&#8381;</p>
+        </div>
         <div id="checkBody">
           <ol id="checkPosition">
             <li>
