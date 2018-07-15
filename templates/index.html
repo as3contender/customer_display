@@ -69,7 +69,7 @@
         el = document.createElement('div');
         el.className = "item_count";
         el.id = "item_count_" + item.id;
-        el.innerHTML = String(item.count);
+        el.innerHTML = String(item.count)+ 'x';
         el_li.appendChild(el);
 
         el = document.createElement('div');
@@ -92,7 +92,7 @@
         el = document.getElementById("item_name_" + item.id);
         el.innerHTML = String(item.name);
         el = document.getElementById("item_count_" + item.id);
-        el.innerHTML = String(item.count);
+        el.innerHTML = String(item.count)+'x';
         el = document.getElementById("item_cost_" + item.id);
         el.innerHTML = String(item.cost) + '<p class="r">&#8381;</p>';
         el = document.getElementById("item_sum_" + item.id);
@@ -124,7 +124,7 @@
     }
 
     const ws = new WebSocket('ws://localhost:8080/ws');
-    const ITEM_ON_DISPLAY = 8;
+    const ITEM_ON_DISPLAY = 7;
     let idItems = 0;
     let checkItems = new CheckItems();
     let isFirst = true;
@@ -194,6 +194,8 @@
       idItems = 0;
       checkItems = new CheckItems();
       isFirst = true;
+      
+      footer.style.display = 'none';
     }
 
     function pong() {
@@ -254,6 +256,9 @@
         checkDelivery.display = 'block';
       }
       isFirst = true;
+      
+      info.innerHTML = 'Одну секунду, пожалуйста, не&nbsp;забудьте&nbsp;Ваш&nbsp;чек';
+      footer.style.display = 'Block';
     }
 
     function hiddenDelItems() {
@@ -315,7 +320,7 @@
   <div class="container">
     <header>
       <img class="logo" src="img/logo.png" alt="logo">
-      <h1 id="info">Доброго времени суток</h1>
+      <h1 id="info">Одну секунду, пожалуйста, не&nbsp;забудьте&nbsp;Ваш&nbsp;чек</h1>
     </header>
     <main>
       <div id="check">
@@ -332,13 +337,13 @@
           <ol id="checkPosition">
             <li>
               <div class="item_name">Первая позиция</div>
-              <div class="item_count">2</div>
+              <div class="item_count">2x'</div>
               <div class="item_cost">3.25</div>
               <div class="item_sum">6.5</div>
             </li>
             <li>
               <div class="item_name">Вторая позиция</div>
-              <div class="item_count">1</div>
+              <div class="item_count">1x</div>
               <div class="item_cost">135.35</div>
               <div class="item_sum">135.35</div>
             </li>
@@ -346,8 +351,8 @@
         </div>
       </div>
     </main>
-    <footer>
-      <p>Footer</p>
+    <footer id="footer">
+      <p>Всего хорошего. Будем рады видеть Вас снова</p>
     </footer>
   </div>
 </body>

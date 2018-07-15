@@ -6,10 +6,7 @@
  }
 
  body {
-   width: 800px;
-   height: 480px;
    font: 12pt MarckScript-Regular, cursive;
-
    color: aliceblue;
  }
 
@@ -19,8 +16,8 @@
  }
 
  .container {
-   width: 800px;
-   height: 480px;
+   width: 765px;
+   height: 443px;
    padding: 10px;
    background-image: url(../img/backgound.jpg);
  }
@@ -85,6 +82,7 @@
 
  #checkDelivery {
    font-size: 1.7em;
+   text-decoration-line: underline;
  }
 
 
@@ -102,5 +100,6 @@
  }
 
  footer {
-   display: none;
+   text-align: :center;
+   font-size: 1.5em;
  }
