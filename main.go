@@ -435,6 +435,7 @@ func main() {
 	http.HandleFunc("/ws", HandleWS)
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./css/"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./img/"))))
+	http.Handle("/advertising/", http.StripPrefix("/advertising/", http.FileServer(http.Dir("./advertising/"))))
 	http.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.Dir("./fonts/"))))
 
 	http.ListenAndServe(":"+port, nil)

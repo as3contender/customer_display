@@ -63,7 +63,7 @@
         el = document.createElement('div');
         el.className = "item_name";
         el.id = "item_name_" + item.id;
-        el.innerHTML = String(item.name);
+        el.innerHTML = String(item.name).substring(0, 50);
         el_li.appendChild(el);
 
         el = document.createElement('div');
@@ -90,7 +90,7 @@
       static updateLabel(item) {
         let el;
         el = document.getElementById("item_name_" + item.id);
-        el.innerHTML = String(item.name);
+        el.innerHTML = String(item.name).substring(0, 50);
         el = document.getElementById("item_count_" + item.id);
         el.innerHTML = String(item.count) + 'x';
         el = document.getElementById("item_cost_" + item.id);
@@ -125,10 +125,12 @@
 
     const ws = new WebSocket('ws://localhost:8080/ws');
     const ITEM_ON_DISPLAY = 5;
+    const COUNT_ADVERTISING = 1;
     let idItems = 0;
     let checkItems = new CheckItems();
     let isFirst = true;
     let Greeting = 0;
+    let advertisingNumber = 1;
 
     function myUpdate(message) {
 
@@ -140,7 +142,9 @@
 
       if (msg.type == "clear") {
         console.log(message);
-        clearDisplay();
+        /*clearDisplay();*/
+        activAdvertising();
+        isFirst = true;
       }
 
       if (msg.type == "ping") {
@@ -191,8 +195,7 @@
       clearCheckBody();
       check.hidden = true;
 
-      imager.style.display = 'block';
-      container.style.display = 'none';
+      activImager();
 
       let greeting = getGreeting();
 
@@ -205,7 +208,6 @@
       if (greeting == 3) {
         imager.className = "imager3"
       }
-
 
       idItems = 0;
       checkItems = new CheckItems();
@@ -232,6 +234,7 @@
     function newCheck() {
       container.style.display = 'block';
       imager.style.display = 'none';
+      advertising.style.display = 'none';
 
       clearCheckBody();
       check.hidden = false;
@@ -246,14 +249,25 @@
     }
 
     function addItem(item) {
+
       if (isFirst == true) {
+
         checkPosition.start = 1;
         clearDisplay();
         isFirst = false;
 
-        container.style.display = 'block';
-        imager.style.display = 'none';
+        setTimeout(activCantainer, 4000);
+        setTimeout(newItem, 4000, item);
+
+      } else {
+        newItem(item);
       }
+
+
+
+    }
+
+    function newItem(item) {
       hiddenDelItems();
       let checkItem = new CheckItem(item.name, item.count, item.cost, item.sum);
       checkItems.addItem(checkItem);
@@ -277,13 +291,13 @@
       }
       isFirst = true;
 
-      setTimeout(showCharge, 9000);
+      setTimeout(showCharge, 6000);
+      setTimeout(activAdvertising, 16000);
     }
 
     function showCharge() {
 
-      imager.style.display = 'block';
-      container.style.display = 'none';
+      activImager();
 
       let greeting = getGreeting();
 
@@ -348,7 +362,36 @@
       return s;
     }
 
-    ConnectWebSocket()
+    function activCantainer() {
+      container.style.display = 'block';
+      imager.style.display = 'none';
+      advertising.style.display = 'none';
+    }
+
+    function activImager() {
+      container.style.display = 'none';
+      imager.style.display = 'block';
+      advertising.style.display = 'none';
+    }
+
+    function activAdvertising() {
+      container.style.display = 'none';
+      imager.style.display = 'none';
+      advertising.style.display = 'block';
+    }
+
+    function setAdvertisingNumber() {
+      advertisingNumber++;
+      if (advertisingNumber > COUNT_ADVERTISING) {
+        advertisingNumber = 1;
+      }
+      advertising.className = "advertising" + advertisingNumber;
+    }
+
+    setInterval(setAdvertisingNumber, 1000);
+
+    ConnectWebSocket();
+    setTimeout(activAdvertising, 2000);
 
   </script>
 
@@ -414,6 +457,7 @@
     </footer>
   </div>
   <div id="imager" class="imager1"></div>
+  <div id="advertising" class="advertising1"></div>
 </body>
 
 </html>

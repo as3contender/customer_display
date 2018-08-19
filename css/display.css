@@ -12,6 +12,10 @@
    /* Путь к файлу со шрифтом */
  }
 
+ html {
+   overflow: hidden;
+ }
+
  body {
    font: 16pt 'OpenSansCondensed-Bold', cursive;
    color: aliceblue;
@@ -23,24 +27,23 @@
  }
 
  #container {
-   width: 765px;
+   width: 763px;
    height: 443px;
    padding: 10px;
-   background-image: url(../img/backgound.jpg);
+   background: url(../img/backgound.png) 100% 100% no-repeat;
+   background-size: cover;
    display: block;
  }
 
  .div_logo {
-   width: 450px;
    height: 100px;
    margin: 0 auto;
  }
 
  .logo {
-   width: 450px;
    height: 100px;
    display: inline-block;
-   margin: 0 auto;
+   padding: 0 5px;
  }
 
  #info {
@@ -55,7 +58,7 @@
 
  .item_name {
    display: inline-block;
-   width: 530px;
+   width: 513px;
    color: aliceblue
  }
 
@@ -130,39 +133,58 @@
  }
 
  #imager {
-   width: 765px;
-   height: 443px;
-   padding: 10px;
+   width: 783px;
+   height: 465px;
    display: none;
-
  }
 
  .imager1 {
-   background: url(../img/good_morning.jpg) 100% 100% no-repeat;
+   background: url(../img/good_morning.gif) 100% 100% no-repeat;
    background-size: cover;
  }
 
  .imager2 {
-   background: url(../img/good_afternoon.jpg) 100% 100% no-repeat;
+   background: url(../img/good_afternoon.gif) 100% 100% no-repeat;
    background-size: cover;
  }
 
  .imager3 {
-   background: url(../img/good_evening.jpg) 100% 100% no-repeat;
+   background: url(../img/good_evening.gif) 100% 100% no-repeat;
    background-size: cover;
  }
 
  .imager4 {
-   background: url(../img/charge_morning.jpg) 100% 100% no-repeat;
+   background: url(../img/charge_morning.png) 100% 100% no-repeat;
    background-size: cover;
  }
 
  .imager5 {
-   background: url(../img/charge_afternoon.jpg) 100% 100% no-repeat;
+   background: url(../img/charge_afternoon.png) 100% 100% no-repeat;
    background-size: cover;
  }
 
  .imager6 {
-   background: url(../img/charge_evening.jpg) 100% 100% no-repeat;
+   background: url(../img/charge_evening.png) 100% 100% no-repeat;
+   background-size: cover;
+ }
+
+ #advertising {
+   width: 783px;
+   height: 465px;
+   display: none;
+ }
+
+ .advertising1 {
+   background: url(../advertising/advertising1.png) 100% 100% no-repeat;
+   background-size: cover;
+ }
+
+ .advertising2 {
+   background: url(../advertising/advertising2.png) 100% 100% no-repeat;
+   background-size: cover;
+ }
+
+ .advertising3 {
+   background: url(../advertising/advertising3.png) 100% 100% no-repeat;
    background-size: cover;
  }
