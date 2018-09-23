@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 
 <head>
@@ -123,7 +124,8 @@
       }
     }
 
-    const ws = new WebSocket('ws://localhost:8080/ws');
+    const ws = new WebSocket('ws://192.168.1.202:8081/ws');
+    //const ws = new WebSocket('ws://localhost:8080/ws');
     const ITEM_ON_DISPLAY = 5;
     const COUNT_ADVERTISING = 1;
     let idItems = 0;
@@ -235,6 +237,7 @@
       container.style.display = 'block';
       imager.style.display = 'none';
       advertising.style.display = 'none';
+      advertising_video.style.display = 'none';
 
       clearCheckBody();
       check.hidden = false;
@@ -366,18 +369,21 @@
       container.style.display = 'block';
       imager.style.display = 'none';
       advertising.style.display = 'none';
+      advertising_video.style.display = 'none';
     }
 
     function activImager() {
       container.style.display = 'none';
       imager.style.display = 'block';
       advertising.style.display = 'none';
+      advertising_video.style.display = 'none';
     }
 
     function activAdvertising() {
       container.style.display = 'none';
       imager.style.display = 'none';
-      advertising.style.display = 'block';
+      //advertising.style.display = 'block';
+      advertising_video.style.display = 'block';
     }
 
     function setAdvertisingNumber() {
@@ -458,6 +464,11 @@
   </div>
   <div id="imager" class="imager1"></div>
   <div id="advertising" class="advertising1"></div>
+  <div id="advertising_video">
+    <video width="783" height="465" autoplay="autoplay" loop="loop" preload="auto">
+      <source src="../advertising/advertising_video1.webm" type='video/webm; codecs="vp8, vorbis"'>
+    </video>
+  </div>
 </body>
 
 </html>

@@ -58,7 +58,7 @@
 
  .item_name {
    display: inline-block;
-   width: 513px;
+   width: 510px;
    color: aliceblue
  }
 
@@ -188,3 +188,9 @@
    background: url(../advertising/advertising3.png) 100% 100% no-repeat;
    background-size: cover;
  }
+
+#advertising_video {
+   width: 783px;
+   height: 465px;
+   display: none;
+}
